@@ -111,25 +111,26 @@ def negative():
 
 def task5():
     def cylinder():
-        
+        def circle(r):
+            return math.pi * (r ** 2)
+
         r = float(input('Enter radius: '))
         h = float(input('Enter height: '))
 
         lateralArea = 2 * math.pi * r * h
-        
+
         choice = input('Do you want to calculate the area of the base? (y/n): ').lower().strip()
-        
+
         match choice:
             case 'y':
                 fullArea = lateralArea + 2 * circle(r)
-                
+
                 print(f"Full area = {fullArea:.2f}")
             case 'n':
                 print(f"Lateral area = {lateralArea:.2f}")
 
-        def circle(r):
-            return math.pi * (r ** 2)
-    
+
+
     cylinder()
         
 def task6_1():

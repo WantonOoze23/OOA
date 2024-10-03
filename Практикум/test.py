@@ -1,5 +1,6 @@
-import matplotlib.pyplot as plt
 import pandas as pd
+import datetime as dt
+import matplotlib.pyplot as plt
 
 class EnergyConsumer:
     def __init__(self, currentEnergyUsage: float):
@@ -7,8 +8,16 @@ class EnergyConsumer:
         maxLimit = 0.0
         minLimit = 0.0
 
-        self.history = pd.DataFrame(['Time'],['Rate'])
-        self.addNew(self.currentEnergyUsage)
+        self.history = pd.DataFrame(columns = ['Time', 'Consumption'])
+
+        self._add_entry(self.currentEnergyUsage)
+
+    def _add_entry(self, consumption):
+        new_entry = pd.DataFrame({
+            'Time': [pd.Timestamp.now()],
+            'Consumption': [consumption]
+        })
+        self.history = pd.concat([self.history, new_entry], ignore_index=True)
 
     def getCurrentEnergyUsage(self):
         return self.currentEnergyUsage
@@ -20,14 +29,15 @@ class EnergyConsumer:
         self.minLimit = newLimits[0]
         self.maxLimit = newLimits[1]
 
-    def addNew(self, newEnergyUsage):
-        newNote = pd.DataFrame({
-            'Time': [pd.Timestamp.now()],
-            'Consumption': [newEnergyUsage]
-        })
+    def constructChart(self):
+        df = pd.DataFrame(self.history, columns=['Energy Consumption'])
+        df = df.cumsum()
+        plt.figure()
+        df.plot()
+        plt.show()
 
-        self.history = pd.concat([self.history, newNote], ignore_index=True)
-
+    def display(self):
+        print()
 
 def main():
     curantEnergy = input("Введіть початкове значення: ")
@@ -35,7 +45,8 @@ def main():
 
     energy = EnergyConsumer(curantEnergy)
     energy.changeLimits(limits)
-    print(energy)
+
+    energy.constructChart()
 
 
 if __name__ == '__main__':
