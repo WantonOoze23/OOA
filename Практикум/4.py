@@ -35,8 +35,13 @@ class EnergyControll:
         if not self.history.empty:
             plt.figure()
             plt.plot(self.history.Time, self.history.Usage, label='Usage')
-            plt.axhline(self.minLimit, color='r', linestyle='--', label='Min')
-            plt.axhline(self.maxLimit, color='g', linestyle='--', label='Max')
+
+            # Додаємо динамічні лінії для мінімальних і максимальних лімітів
+            plt.plot(self.history.Time, self.history.Min, color='r', linestyle='--', label='Min Limit')
+            plt.plot(self.history.Time, self.history.Max, color='g', linestyle='--', label='Max Limit')
+
+            plt.xlabel('Time')
+            plt.ylabel('Energy Usage')
             plt.legend()
             plt.show()
         else:
