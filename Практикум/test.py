@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import datetime as dt
 
 class EnergyConsumer:
     def __init__(self, currentEnergyUsage: float):
@@ -9,6 +8,7 @@ class EnergyConsumer:
         minLimit = 0.0
 
         self.history = pd.DataFrame(['Time'],['Rate'])
+        self.addNew(self.currentEnergyUsage)
 
     def getCurrentEnergyUsage(self):
         return self.currentEnergyUsage
@@ -20,7 +20,13 @@ class EnergyConsumer:
         self.minLimit = newLimits[0]
         self.maxLimit = newLimits[1]
 
-    #def constructChart(self):
+    def addNew(self, newEnergyUsage):
+        newNote = pd.DataFrame({
+            'Time': [pd.Timestamp.now()],
+            'Consumption': [newEnergyUsage]
+        })
+
+        self.history = pd.concat([self.history, newNote], ignore_index=True)
 
 
 def main():
@@ -29,6 +35,7 @@ def main():
 
     energy = EnergyConsumer(curantEnergy)
     energy.changeLimits(limits)
+    print(energy)
 
 
 if __name__ == '__main__':

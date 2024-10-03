@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Практикум/numpy" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Практикум/numpy/doc/source/_static/scipy-mathjax" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Практикум/numpy/numpy/_core/src/common/pythoncapi-compat" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Практикум/numpy/numpy/_core/src/highway" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Практикум/numpy/numpy/_core/src/npysort/x86-simd-sort" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Практикум/numpy/numpy/_core/src/umath/svml" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Практикум/numpy/numpy/fft/pocketfft" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Практикум/numpy/vendored-meson/meson" vcs="Git" />
   </component>
 </project>
