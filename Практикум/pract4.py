@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 class EnergyControll:
-    def __init__(self, usage, limits: float):
+    def __init__(self, usage, limits: [float]):
         self.usage = usage
         self.minLimit = limits[0]
         self.maxLimit = limits[1]
@@ -36,7 +36,6 @@ class EnergyControll:
             plt.figure()
             plt.plot(self.history.Time, self.history.Usage, label='Usage')
 
-            # Додаємо динамічні лінії для мінімальних і максимальних лімітів
             plt.plot(self.history.Time, self.history.Min, color='r', linestyle='--', label='Min Limit')
             plt.plot(self.history.Time, self.history.Max, color='g', linestyle='--', label='Max Limit')
 
@@ -63,7 +62,7 @@ class EnergyControll:
 
 def main():
     limits = [200, 2500]
-    energyManager = EnergyControll(usage=0, limits=limits )
+    energyManager = EnergyControll(usage=0, limits=limits)
 
     print(energyManager.history)
 
@@ -92,7 +91,7 @@ def main():
                                 maxLim = float(input('Введіть максимальний ліміт: '))
                                 if minLim < maxLim:
                                     newLimits = [minLim, maxLim]
-                                    energyManager.changeLimits(newLimits)  # Оновлення меж в об'єкті
+                                    energyManager.changeLimits(newLimits)
 
                                     addNewLimitedUsage = float(input('Введіть нове значення енергії: '))
                                     if newLimits[0] <= addNewLimitedUsage <= newLimits[1]:

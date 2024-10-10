@@ -53,3 +53,18 @@ if __name__ == "__main__":
     
     f = a / b
     f.output()
+
+    num1 = int(input("Enter a number: "))
+    num2 = int(input("Enter another number: "))
+
+    add = num1 + num2
+    print(add)
+
+    sub = num1 - num2
+    print(sub)
+
+    mul = num1 * num2
+    print(mul)
+
+    div = num1 / num2
+    print(div)
