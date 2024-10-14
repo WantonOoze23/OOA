@@ -2,27 +2,23 @@ import pandas as pd
 import datetime
 import matplotlib.pyplot as plt
 
-
-class EnergyControll:
+class EnergyControl:
     def __init__(self, usage, limits: [float]):
         self.usage = usage
         self.minLimit = limits[0]
         self.maxLimit = limits[1]
 
-        self.history = pd.DataFrame(columns=['Time', 'Usage', 'Min', 'Max'])
+        self.history = pd.DataFrame(columns=['Time', 'Curent_Usage', 'Min', 'Max'])
 
     def addNewNote(self, energy):
         new_entry = pd.DataFrame({
-            'Time': [datetime.datetime.now()],
-            'Usage': [energy],
+            'Time': [datetime.datetime.now().strftime('%Y.%m.%d %H:%M')],
+            'Current_Usage': [energy],
             'Min': [self.minLimit],
             'Max': [self.maxLimit]
         })
 
-        if not self.history.empty:
-            self.history = pd.concat([self.history, new_entry], ignore_index=True)
-        else:
-            self.history = new_entry
+        self.history = pd.concat([self.history, new_entry], ignore_index=True)
 
     def changeLimits(self, Limits):
         self.minLimit = Limits[0]
@@ -33,14 +29,14 @@ class EnergyControll:
 
     def visualisation(self):
         if not self.history.empty:
-            plt.figure()
-            plt.plot(self.history.Time, self.history.Usage, label='Usage')
+            plt.figure(figsize=(20, 6))
+            plt.plot(self.history.Time, self.history.Current_Usage, label='Usage')
 
             plt.plot(self.history.Time, self.history.Min, color='r', linestyle='--', label='Min Limit')
             plt.plot(self.history.Time, self.history.Max, color='g', linestyle='--', label='Max Limit')
 
             plt.xlabel('Time')
-            plt.ylabel('Energy Usage')
+            plt.ylabel('Energy Usage Kw/h')
             plt.legend()
             plt.show()
         else:
@@ -52,7 +48,8 @@ class EnergyControll:
     def load(self):
         try:
             self.history = pd.read_csv("energy.csv")
-            self.history['Time'] = pd.to_datetime(self.history['Time'])
+            self.history['Time'] = pd.to_datetime(self.history['Time'], format='%Y.%m.%d %H:%M')
+            self.history['Current_Usage'] = pd.to_numeric(self.history['Current_Usage'], errors='coerce')
             print("Дані успішно завантажено.")
         except FileNotFoundError:
             print("Файл не знайдено.")
@@ -62,47 +59,42 @@ class EnergyControll:
 
 def main():
     limits = [200, 2500]
-    energyManager = EnergyControll(usage=0, limits=limits)
-
-    print(energyManager.history)
+    energyManager = EnergyControl(usage=0, limits=limits)
 
     while True:
-        print("Меню\n1. Додати новий запис\n2. Переглянути дані\n3. Завантажити дані\n0. Вийти")
+        print("\nМеню\n1. Додати новий запис\n2. Переглянути дані\n3. Завантажити дані\n0. Вийти")
         try:
             choice = int(input('Оберіть опцію: '))
             match choice:
                 case 1:
-                    try:
-                        print(f"Залишити поточні ліміти min = {limits[0]}, max = {limits[1]}, [y/n]: ")
-                        inputChoice = input().lower()
-                        match inputChoice:
-                            case 'y':
-                                try:
-                                    addNewUsage = float(input('Введіть нове значення енергії: '))
-                                    if limits[0] <= addNewUsage <= limits[1]:
-                                        energyManager.addNewNote(addNewUsage)
-                                    else:
-                                        print(f"Значення енергії має бути в межах {limits[0]} - {limits[1]}")
-                                except ValueError:
-                                    print("Так не можна")
-
-                            case 'n':
-                                minLim = float(input('Введіть мінімальний ліміт: '))
-                                maxLim = float(input('Введіть максимальний ліміт: '))
-                                if minLim < maxLim:
-                                    newLimits = [minLim, maxLim]
-                                    energyManager.changeLimits(newLimits)
-
-                                    addNewLimitedUsage = float(input('Введіть нове значення енергії: '))
-                                    if newLimits[0] <= addNewLimitedUsage <= newLimits[1]:
-                                        energyManager.addNewNote(addNewLimitedUsage)
-                                    else:
-                                        print(f"Значення енергії має бути в межах {newLimits[0]} - {newLimits[1]}")
+                    print(f"Залишити поточні ліміти min = {energyManager.minLimit}, max = {energyManager.maxLimit}, [y/n]: ")
+                    inputChoice = input().lower()
+                    if inputChoice == 'y':
+                        try:
+                            addNewUsage = float(input('Введіть нове значення енергії: '))
+                            if energyManager.minLimit <= addNewUsage <= energyManager.maxLimit:
+                                energyManager.addNewNote(addNewUsage)
+                            else:
+                                print(f"Значення енергії має бути в межах {energyManager.minLimit} - {energyManager.maxLimit}")
+                        except ValueError:
+                            print("Помилка: введено неправильне значення.")
+                    elif inputChoice == 'n':
+                        try:
+                            minLim = float(input('Введіть мінімальний ліміт: '))
+                            maxLim = float(input('Введіть максимальний ліміт: '))
+                            if minLim < maxLim:
+                                energyManager.changeLimits([minLim, maxLim])
+                                addNewLimitedUsage = float(input('Введіть нове значення енергії: '))
+                                if minLim <= addNewLimitedUsage <= maxLim:
+                                    energyManager.addNewNote(addNewLimitedUsage)
                                 else:
-                                    print("Мінімальний ліміт має бути меншим за максимальний.")
-                    except ValueError:
-                        print("Спробуйте ще раз")
-
+                                    print(f"Значення енергії має бути в межах {minLim} - {maxLim}")
+                            else:
+                                print("Мінімальний ліміт має бути меншим за максимальний.")
+                        except ValueError:
+                            print("Помилка: введено неправильне значення.")
+                    else:
+                        print("Невірний вибір.")
                 case 2:
                     energyManager.display()
 
@@ -112,14 +104,13 @@ def main():
                 case 0:
                     energyManager.visualisation()
                     energyManager.save()
-                    print('Bye Bye!...')
+                    print('До побачення!')
                     break
+                case _:
+                    print("Невірний вибір. Спробуйте знову.")
 
-            print(energyManager.history)
         except ValueError:
-            print('Введіть ціле число!')
-
+            print('Помилка: введіть ціле число!')
 
 if __name__ == '__main__':
     main()
-
