@@ -37,6 +37,13 @@ class Budget:
                 f"Total Spent: {self.totalSpent()} UAH\n"
                 f"Remaining Budget: {self.remainingBudget()} UAH")
 
+"""
+class User:
+    def __init__(self, name: str, budget: Budget, budgets: List[Budget]):
+        self.name = name
+        self.budget = budget
+        
+"""
 
 def menu():
     print("\n--- ОЩАДБАНК МЕНЮ ---")
@@ -95,20 +102,20 @@ def main():
     while True:
         menu()
         choice = input("Введіть номер опції: ")
-
-        if choice == '1':
-            addCategory(categories)
-        elif choice == '2':
-            addTransaction(budget, categories)
-        elif choice == '3':
-            showTransactions(budget)
-        elif choice == '4':
-            showBudget(budget)
-        elif choice == '0':
-            print("Вихід з програми.")
-            break
-        else:
-            print("Неправильний вибір. Спробуйте ще раз.")
+        match choice:
+            case 1:
+                addCategory(categories)
+            case 2:
+                addTransaction(budget, categories)
+            case 3:
+                showTransactions(budget)
+            case 4:
+                showBudget(budget)
+            case 0:
+                print("Вихід з програми.")
+                break
+            case _:
+                print("Неправильний вибір. Спробуйте ще раз.")
 
 
 if __name__ == '__main__':
