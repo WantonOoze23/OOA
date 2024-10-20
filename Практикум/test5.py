@@ -1,7 +1,5 @@
 from datetime import datetime
 import pandas as pd
-from matplotlib.cbook import contiguous_regions
-
 
 class Category:
     def __init__(self, name: str, description: str):
