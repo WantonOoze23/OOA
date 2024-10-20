@@ -3,8 +3,8 @@ from datetime import datetime
 from typing import List
 
 class Category:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, categoryName):
+        self.categoryName = categoryName
 
 class Transaction:
     def __init__(self, amount: float, category: Category, description: str, date: datetime = None):
