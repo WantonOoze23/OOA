@@ -41,14 +41,12 @@ class User:
     def addTransaction(self, category: Category, amount: float, users):
         transaction = Transaction(category, amount, datetime.now())
 
-        # Створюємо новий рядок як DataFrame для додавання
         new_transaction = pd.DataFrame([{
             'category': category.name,
             'amount': amount,
             'date': transaction.date.strftime('%d.%m.%Y, %H:%M')
         }])
 
-        # Додаємо перевірку, щоб уникнути попередження
         if not new_transaction.empty:
             self.transactions = pd.concat([self.transactions, new_transaction], ignore_index=True)
 
@@ -75,7 +73,6 @@ class User:
                         self.budget -= abs(amount)
                         recipient.budget += abs(amount)
 
-                        # Додаємо транзакцію переказу до обох користувачів без рекурсивного виклику
                         self.transactions = pd.concat([self.transactions, pd.DataFrame([{
                             'category': "Переказ",
                             'amount': -abs(amount),
