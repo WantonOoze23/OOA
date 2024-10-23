@@ -47,8 +47,11 @@ class User:
             'date': transaction.date.strftime('%d.%m.%Y, %H:%M')
         }])
 
-        if not new_transaction.empty:
+        if not new_transaction.dropna(how='all').empty: #видалить усі рядки, де всі значення NA
             self.transactions = pd.concat([self.transactions, new_transaction], ignore_index=True)
+        else:
+            print("Попередження: спроба додати порожню або некоректну транзакцію!")
+            self.transactions = pd.DataFrame(columns=['category', 'amount', 'date'])
 
         if category.name == 'Дохід' or amount > 0:
             self.budget += abs(amount)
@@ -84,6 +87,7 @@ class User:
                             'amount': abs(amount),
                             'date': transaction.date.strftime('%d.%m.%Y, %H:%M')
                         }])], ignore_index=True)
+
 
                         print(f'Пересилання {amount} грн користувачу {recipient.username} успішно виконано.')
                     else:
@@ -198,6 +202,7 @@ def main():
                     print('Невірно введений бюджет')
 
                 users.append(User(userID, username, Budget(budget)))
+                saveUsers(users)
 
             case 2:
                 addCategory(categories)
@@ -218,6 +223,7 @@ def main():
                 amount = float(input('Введіть суму транзакції (для витрат вкажіть мінус): '))
                 user.addTransaction(category, amount, users)
                 print(f'Транзакцію для {user.username} додано.')
+
 
             case 4:
                 for i, user in enumerate(users):

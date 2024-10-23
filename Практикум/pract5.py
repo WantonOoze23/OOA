@@ -14,7 +14,7 @@ class Transaction:
         self.date = date if date else datetime.now()
 
     def __repr__(self):
-        return f"{self.date.strftime('%d.%m.%Y')} - {self.description}: {self.amount} UAH in {self.category.name}"
+        return f"{self.date.strftime('%d.%m.%Y')} - {self.description}: {self.amount} UAH in {self.category.categoryName}"
 
 class Budget:
     def __init__(self, name: str, totalBudget: float):
@@ -70,7 +70,7 @@ def addTransaction(budget: Budget, categories: List[Category]):
 
     print("Оберіть категорію:")
     for i, category in enumerate(categories, 1):
-        print(f"{i}. {category.name}")
+        print(f"{i}. {category.categoryName}")
     category_index = int(input("Введіть номер категорії: ")) - 1
 
     if 0 <= category_index < len(categories):
