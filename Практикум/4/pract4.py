@@ -47,7 +47,7 @@ class EnergyControl:
 
     def load(self):
         try:
-            self.history = pd.read_csv("energy.csv")
+            self.history = pd.read_csv("../5/energy.csv")
             self.history['Time'] = pd.to_datetime(self.history['Time'], format='%Y.%m.%d %H:%M')
             self.history['Current_Usage'] = pd.to_numeric(self.history['Current_Usage'], errors='coerce')
             print("Дані успішно завантажено.")

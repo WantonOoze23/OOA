@@ -52,7 +52,7 @@ class EnergyControll:
 
     def load(self):
         try:
-            self.history = pd.read_csv("energy.csv")
+            self.history = pd.read_csv("../5/energy.csv")
             self.history['Time'] = pd.to_datetime(self.history['Time'])
             print("Дані успішно завантажено.")
         except FileNotFoundError:
