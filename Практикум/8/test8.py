@@ -125,34 +125,52 @@ class Transaction:
             "Amount to Pay": self.amount_to_pay
         }
 
+def transaction_output(transaction: Transaction):
+    vehicle = transaction.reservation.vehicle
+    payment = transaction.process_payment()
 
-# Приклад використання:
+    return f"Транзакція для {vehicle.name} {vehicle.model}: Сума: {payment} грн"
 
-Audi = Car('ABC123', 'Audi', 'A4', 'Комфорт')
-Bentley = Car('123123', 'Bentley', 'Continental', 'Бізнес')
-Harley = Motorcycle('XYZ987', 'Harley', 'Sportster')
+def add_car():
+    pass
 
-floor1 = Parking("1", 5)  # Створюємо паркувальний поверх з 5 місцями
+def main():
 
-# Бронювання місця для Audi
-reservation_audi = Reservation(Audi, floor1, 3)  # 3 години
-print(reservation_audi.make_reservation())  # Окупація місця для Audi
-transaction_audi = Transaction(reservation_audi)
-payment_audi = transaction_audi.process_payment()
-print(f"Транзакція для {Audi.name} {Audi.model}: Сума: {payment_audi} у.о.")
-print(transaction_audi.get_transaction_info())
+    # Приклад використання:
 
-# Бронювання місця для Harley
-reservation_harley = Reservation(Harley, floor1, 2)  # 2 години
-print(reservation_harley.make_reservation())  # Окупація місця для Harley
-transaction_harley = Transaction(reservation_harley)
-payment_harley = transaction_harley.process_payment()
-print(f"Транзакція для {Harley.name} {Harley.model}: Сума: {payment_harley} у.о.")
-print(transaction_harley.get_transaction_info())
+    Audi = Car('ABC123', 'Audi', 'A4', 'Комфорт')
+    Bentley = Car('123123', 'Bentley', 'Continental', 'Бізнес')
+    Harley = Motorcycle('XYZ987', 'Harley', 'Sportster')
 
-# Виведення інформації про паркувальні місця
-print(floor1)
+    floor1 = Parking("1", 10)  # Створюємо паркувальний поверх з 5 місцями
 
-# Скасування бронювання для Audi
-print(reservation_audi.cancel_reservation())  # Скасування для Audi
-print(floor1)
+
+    # Бронювання місця для Audi
+    reservation_audi = Reservation(Audi, floor1, 3)  # 3 години
+    print(reservation_audi.make_reservation())  # Окупація місця для Audi
+    transaction_audi = Transaction(reservation_audi)
+    print(transaction_output(transaction_audi))  # Використовуємо оновлену функцію для виведення транзакції
+    print(transaction_audi.get_transaction_info())
+
+    # Бронювання місця для Harley
+    reservation_harley = Reservation(Harley, floor1, 3)
+    print(reservation_harley.make_reservation())  # Окупація місця для Harley
+    transaction_harley = Transaction(reservation_harley)
+    print(transaction_output(transaction_harley))  # Використовуємо функцію для Harley
+    print(transaction_harley.get_transaction_info())
+
+    # Бронювання місця для Bentley
+    reservation_bentley = Reservation(Bentley, floor1, 3)
+    print(reservation_bentley.make_reservation())
+    transaction_bentley = Transaction(reservation_bentley)
+    payment_bentley = transaction_bentley.process_payment()
+
+    # Виведення інформації про паркувальні місця
+    print(floor1)
+
+    # Скасування бронювання для Audi
+    print(reservation_audi.cancel_reservation())  # Скасування для Audi
+    print(floor1)
+
+if __name__ == '__main__':
+    main()
