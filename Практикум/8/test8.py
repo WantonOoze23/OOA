@@ -1,5 +1,6 @@
 #Створити інформаційно-пошукову систему роботи автостоянки.
 from typing import Union
+import customtkinter
 
 class Vehicle:
     def __init__(self, plate_number, name, model, vehicle_class: str = None):
@@ -7,6 +8,7 @@ class Vehicle:
         self.name = name
         self.model = model
         self.vehicle_class = vehicle_class
+
 
     def __str__(self):
         return f'{self._plate_number} {self.name} {self.model}'
@@ -134,8 +136,19 @@ def transaction_output(transaction: Transaction):
 def add_car():
     pass
 
+
+
 def main():
 
+    app = customtkinter.CTk()
+    app.title('Parking Spot')
+    app.geometry('800x600')
+
+
+
+    button_reserve = customtkinter.CTkButton()
+
+    app.mainloop()
     # Приклад використання:
 
     Audi = Car('ABC123', 'Audi', 'A4', 'Комфорт')
