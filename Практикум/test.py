@@ -1,53 +1,24 @@
-import pandas as pd
-import datetime as dt
-import matplotlib.pyplot as plt
+import customtkinter
 
-class EnergyConsumer:
-    def __init__(self, currentEnergyUsage: float):
-        self.currentEnergyUsage = currentEnergyUsage
-        maxLimit = 0.0
-        minLimit = 0.0
+class MyFrame(customtkinter.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
 
-        self.history = pd.DataFrame(columns = ['Time', 'Consumption'])
-
-        self._add_entry(self.currentEnergyUsage)
-
-    def _add_entry(self, consumption):
-        new_entry = pd.DataFrame({
-            'Time': [pd.Timestamp.now()],
-            'Consumption': [consumption]
-        })
-        self.history = pd.concat([self.history, new_entry], ignore_index=True)
-
-    def getCurrentEnergyUsage(self):
-        return self.currentEnergyUsage
-
-    def setCurrentEnergyUsage(self, currentEnergyUsage):
-        self.currentEnergyUsage = currentEnergyUsage
-
-    def changeLimits(self, newLimits):
-        self.minLimit = newLimits[0]
-        self.maxLimit = newLimits[1]
-
-    def constructChart(self):
-        df = pd.DataFrame(self.history, columns=['Energy Consumption'])
-        df = df.cumsum()
-        plt.figure()
-        df.plot()
-        plt.show()
-
-    def display(self):
-        print()
-
-def main():
-    curantEnergy = input("Введіть початкове значення: ")
-    limits = [100, 200]
-
-    energy = EnergyConsumer(curantEnergy)
-    energy.changeLimits(limits)
-
-    energy.constructChart()
+        # add widgets onto the frame, for example:
+        self.label = customtkinter.CTkLabel(self)
+        self.label.grid(row=0, column=0, padx=20)
 
 
-if __name__ == '__main__':
-    main()
+class App(customtkinter.CTk):
+    def __init__(self):
+        super().__init__()
+        self.geometry("400x200")
+        self.grid_rowconfigure(0, weight=1)  # configure grid system
+        self.grid_columnconfigure(0, weight=1)
+
+        self.my_frame = MyFrame(master=self)
+        self.my_frame.grid(row=0, column=0, padx=20, pady=20, sticky="sew")
+
+
+app = App()
+app.mainloop()

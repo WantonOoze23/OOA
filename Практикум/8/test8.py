@@ -1,6 +1,4 @@
-#Створити інформаційно-пошукову систему роботи автостоянки.
 from typing import Union
-import customtkinter
 
 class Vehicle:
     def __init__(self, plate_number, name, model, vehicle_class: str = None):
@@ -8,7 +6,6 @@ class Vehicle:
         self.name = name
         self.model = model
         self.vehicle_class = vehicle_class
-
 
     def __str__(self):
         return f'{self._plate_number} {self.name} {self.model}'
@@ -29,12 +26,14 @@ class Car(Vehicle):
             case _:
                 return hours * 25
 
+
 class Motorcycle(Vehicle):
     def __init__(self, plate_number, name, model):
         super().__init__(plate_number, name, model)
 
     def calculate_fee(self, hours):
         return hours * 20
+
 
 class Truck(Vehicle):
     def __init__(self, plate_number, name, model):
@@ -65,39 +64,51 @@ class ParkingSpot:
         return f"Місце {self.number} звільнено"
 
     def __str__(self):
-        return f"Місце {self.number}: {f'Зайнято {self.vehicle.name} {self.vehicle.model}' if self.is_occupied else 'Вільне'}"
+        return f"Місце {self.number}: {f'Зайнято {self.vehicle.name} {self.vehicle.model} {self.vehicle._plate_number}' if self.is_occupied else 'Вільне'}"
 
 
 class Parking:
     def __init__(self, floor: str, amount: int):
         self.floor = floor
-        self.amount = amount
         self.spots = [ParkingSpot(i + 1) for i in range(amount)]
 
     def find_free_spot(self):
         for spot in self.spots:
             if not spot.is_occupied:
                 return spot
-        return None  # Якщо місця немає
+        return None
+
+    def find_spot_by_number(self, spot_number):
+        if 0 < spot_number <= len(self.spots):
+            return self.spots[spot_number - 1]
+        return None
 
     def __str__(self):
         return "\n".join([str(spot) for spot in self.spots])
 
 
 class Reservation:
-    def __init__(self, vehicle: Union[Car, Motorcycle, Truck], parking: Parking, hours: int):
+    def __init__(self, vehicle: Union[Car, Motorcycle, Truck], parking: Parking, hours: int, spot_number = None):
         self.vehicle = vehicle
         self.parking = parking
         self.hours = hours
-        self.spot_number = None
+        self.spot_number = spot_number
 
     def make_reservation(self):
-        free_spot = self.parking.find_free_spot()
-        if free_spot is None:
-            return "Немає вільних місць"
-        self.spot_number = free_spot.number
-        free_spot.occupy(self.vehicle)
-        return f"Бронювання успішне для {self.vehicle.name} {self.vehicle.model} на місце {self.spot_number}"
+        if self.spot_number:  # Якщо користувач вказав місце
+            spot = self.parking.find_spot_by_number(self.spot_number)
+            if spot and not spot.is_occupied:
+                spot.occupy(self.vehicle)
+                return f"Бронювання успішне для {self.vehicle.name} {self.vehicle.model} на місце {spot.number}"
+            else:
+                return f"Місце {self.spot_number} недоступне"
+        else:  # Автоматичний вибір вільного місця
+            free_spot = self.parking.find_free_spot()
+            if free_spot is None:
+                return "Немає вільних місць"
+            self.spot_number = free_spot.number
+            free_spot.occupy(self.vehicle)
+            return f"Бронювання успішне для {self.vehicle.name} {self.vehicle.model} на місце {self.spot_number}"
 
     def cancel_reservation(self):
         if self.spot_number is None:
@@ -127,63 +138,39 @@ class Transaction:
             "Amount to Pay": self.amount_to_pay
         }
 
-def transaction_output(transaction: Transaction):
-    vehicle = transaction.reservation.vehicle
-    payment = transaction.process_payment()
-
-    return f"Транзакція для {vehicle.name} {vehicle.model}: Сума: {payment} грн"
-
-def add_car():
-    pass
-
+    def transaction_output(self):
+        vehicle = self.reservation.vehicle
+        payment = self.process_payment()
+        return f"Транзакція для {vehicle.name} {vehicle.model}: Сума: {payment} грн"
 
 
 def main():
+    # Створення прикладів транспортних засобів
+    audi = Car('ABC123', 'Audi', 'A4', 'Комфорт')
+    harley = Motorcycle('XYZ987', 'Harley', 'Sportster')
+    bentley = Car('123123', 'Bentley', 'Continental', 'Бізнес')
 
-    app = customtkinter.CTk()
-    app.title('Parking Spot')
-    app.geometry('800x600')
+    parking_C = Parking("1", 10)
 
-
-
-    button_reserve = customtkinter.CTkButton()
-
-    app.mainloop()
-    # Приклад використання:
-
-    Audi = Car('ABC123', 'Audi', 'A4', 'Комфорт')
-    Bentley = Car('123123', 'Bentley', 'Continental', 'Бізнес')
-    Harley = Motorcycle('XYZ987', 'Harley', 'Sportster')
-
-    floor1 = Parking("1", 10)  # Створюємо паркувальний поверх з 5 місцями
-
-
-    # Бронювання місця для Audi
-    reservation_audi = Reservation(Audi, floor1, 3)  # 3 години
-    print(reservation_audi.make_reservation())  # Окупація місця для Audi
+    # Бронювання для Audi
+    reservation_audi = Reservation(audi, parking_C, 3, 5)
+    print(reservation_audi.make_reservation())
     transaction_audi = Transaction(reservation_audi)
-    print(transaction_output(transaction_audi))  # Використовуємо оновлену функцію для виведення транзакції
-    print(transaction_audi.get_transaction_info())
+    print(transaction_audi.transaction_output())
 
-    # Бронювання місця для Harley
-    reservation_harley = Reservation(Harley, floor1, 3)
-    print(reservation_harley.make_reservation())  # Окупація місця для Harley
+    # Бронювання для Harley
+    reservation_harley = Reservation(harley, parking_C, 3)
+    print(reservation_harley.make_reservation())
     transaction_harley = Transaction(reservation_harley)
-    print(transaction_output(transaction_harley))  # Використовуємо функцію для Harley
-    print(transaction_harley.get_transaction_info())
+    print(transaction_harley.transaction_output())
 
-    # Бронювання місця для Bentley
-    reservation_bentley = Reservation(Bentley, floor1, 3)
-    print(reservation_bentley.make_reservation())
-    transaction_bentley = Transaction(reservation_bentley)
-    payment_bentley = transaction_bentley.process_payment()
-
-    # Виведення інформації про паркувальні місця
-    print(floor1)
+    # Виведення інформації про всі місця
+    print(parking_C)
 
     # Скасування бронювання для Audi
-    print(reservation_audi.cancel_reservation())  # Скасування для Audi
-    print(floor1)
+    print(reservation_audi.cancel_reservation())
+    print(parking_C)
+
 
 if __name__ == '__main__':
     main()
