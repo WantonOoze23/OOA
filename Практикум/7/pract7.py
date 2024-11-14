@@ -4,6 +4,9 @@ class Notifier(ABC):
     @abstractmethod
     def notify(self, message: str) -> None:
         pass
+    @abstractmethod
+    def methodname(self):
+        pass
 
 class EmailNotifier(Notifier):
     def __init__(self, name: str, email: str):
@@ -13,6 +16,9 @@ class EmailNotifier(Notifier):
     def notify(self, message: str) -> None:
         print(f"{self.name}, {message}")
 
+    def methodname(self):
+        return 'EMAIL'
+
 class SMSNotifier(Notifier):
     def __init__(self, name: str, number: str):
         self.name = name
@@ -20,6 +26,9 @@ class SMSNotifier(Notifier):
 
     def notify(self, message: str) -> None:
         print(f"{self.name}, {message}")
+
+    def methodname(self):
+        return 'SMS'
 
 class NotificationManager():
     def __init__(self):
@@ -36,7 +45,7 @@ class NotificationManager():
         self.notifiers.remove(notifier)
 
     def __str__(self):
-        return ', '.join([notifier.name for notifier in self.notifiers])
+        return ''.join([f'\n{notifier.name} - {notifier.methodname()}' for notifier in self.notifiers])
 
 def main():
     Daniil = EmailNotifier("Daniil","example@gmail.com")
@@ -52,5 +61,6 @@ def main():
     Daniil.notify('hello world')
 
     print('Наявні отримувачі:', manager)
+
 if __name__ == '__main__':
     main()

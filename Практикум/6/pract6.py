@@ -1,55 +1,84 @@
+import copy
 import time
 
-class ReplicationNode:
+class Data:
     def __init__(self, node_id):
         self.id = node_id
         self.data = {}
         self.last_updated = time.time()
 
-    def update_data(self, key, value):
-        self.data[key] = value
+    def add_data(self, inject_data):
+        self.data = inject_data
         self.last_updated = time.time()
 
-    def get_data(self, key):
-        return self.data.get(key)
+    def __str__(self):
+        return f'{self.id}: {self.data}'
 
-    def get_last_updated(self):
-        return self.last_updated
+class DataReplicationManager:
+    def __init__(self):
+        self.node = []
 
-class ReplicationManager:
-    def __init__(self, nodes):
-        self.nodes = nodes
+    def add_node(self, node: Data):
+        self.node.append(node)
 
-    def handle_conflict(self, conflicting_data):
-        # Логіка вирішення конфлікту
-        # Наприклад, можна використовувати таймстампи для вибору найновішої версії
-        resolved_data = {}
-        for key, values in conflicting_data.items():
-            latest_value = max(values, key=lambda x: x[1])
-            resolved_data[key] = latest_value[0]
-        return resolved_data
+    def register(self, node: Data):
+        self.node.append(node)
+
+    def resolve_conflicts(self, node1: Data, node2: Data):
+        if node1.last_updated > node2.last_updated:
+            return node1
+        else:
+            return node2
+
+    def replicate(self, source_node: Data, target_node: Data):
+        if target_node.last_updated < source_node.last_updated:
+            target_node.data = copy.deepcopy(source_node.data)
+            target_node.last_updated = source_node.last_updated
+            print(f"Data replicated from Node {source_node.id} to Node {target_node.id}")
+        else:
+            print(f"No replication needed. Node {target_node.id} has newer or equal data.")
+
+    def __str__(self):
+        return '\n'.join([str(node) for node in self.node])
 
 def main():
-    # Створення вузлів
-    node1 = ReplicationNode(1)
-    node2 = ReplicationNode(2)
+    data1 = Data(1)
+    time.sleep(0.1)
+    data2 = Data(2)
+    time.sleep(0.1)
+    data3 = Data(3)
+    time.sleep(0.1)
 
-    # Створення менеджера
-    manager = ReplicationManager([node1, node2])
 
-    # Оновлення даних на різних вузлах
-    node1.update_data("key1", "value1")
-    node2.update_data("key1", "value2")
+    manager = DataReplicationManager()
 
-    # Виявлення конфлікту та його вирішення
-    conflicting_data = {"key1": [(node1.get_data("key1"), node1.get_last_updated()), (node2.get_data("key1"), node2.get_last_updated())]}
-    resolved_data = manager.handle_conflict(conflicting_data)
-    print(resolved_data)
-    node1.update_data("key1", "value3")
-    conflicting_data2 = {"key1": [(node1.get_data("key1"), node1.get_last_updated()),
-                                 (node2.get_data("key1"), node2.get_last_updated())]}
-    resolved_data2 = manager.handle_conflict(conflicting_data2)
-    print(resolved_data2)
+
+    manager.register(data1)
+    manager.register(data2)
+    manager.register(data3)
+
+
+    data1.add_data('Daniil')
+    data2.add_data('Kyiv')
+
+    print("\nДані після додавання:")
+    print(data1)
+    print(data2)
+    print(data3)
+
+    # Реплікація даних із Node 1 до Node 3
+    print("\nРеплікація даних з Node 1 до Node 3:")
+    manager.replicate(data1, data3)
+
+    print("\nСтан всіх вузлів після реплікації:")
+    print(manager)
+
+    # Реплікація даних із Node 2 до Node 1
+    print("\nРеплікація даних з Node 2 до Node 1:")
+    manager.replicate(data2, data1)
+
+    print("\nСтан всіх вузлів після другої реплікації:")
+    print(manager)
 
 
 if __name__ == '__main__':
