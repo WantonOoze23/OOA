@@ -201,7 +201,7 @@ def main():
         print('5. Task 3_1')
         print('6. Task 3_2')
         print('7. Task 4')
-        print('8. Task 5')
+        print('Parking. Task 5')
         print('9. Task 6_1')
         print('10. Task 6_2')
         print('11. Task 7')

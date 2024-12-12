@@ -4,7 +4,7 @@ import time
 class Data:
     def __init__(self, node_id):
         self.id = node_id
-        self.data = {}
+        self.data = None
         self.last_updated = time.time()
 
     def add_data(self, inject_data):
@@ -52,6 +52,16 @@ class DataReplicationManager:
 
     def __str__(self):
         return '\n'.join([str(node) for node in self.node])
+
+def display_menu():
+    print("\nМеню:")
+    print("1. Додати дані до вузла")
+    print("2. Реплікувати дані між вузлами")
+    print("3. Видалити дані з вузла")
+    print("4. Переглянути стан всіх вузлів")
+    print("5. Створити новий вузол")
+    print("0. Вийти")
+    return int(input("Оберіть дію: "))
 
 def main():
     data1 = Data(1)
@@ -101,6 +111,51 @@ def main():
     print(manager)
 
     manager.replicate(manager.node[0], manager.node[3])
+
+    while True:
+        try:
+            choice = display_menu()
+            match choice:
+                case 1:
+                    try:
+                        print(manager)
+                        node_id = int(input("Введіть ID вузла: "))
+                        data_input = input("Введіть дані для додавання: ")
+                        manager.node[node_id - 1].add_data(data_input)
+                        print(f"Дані додані до вузла {node_id}.")
+                    except (ValueError, IndexError):
+                        print("Некоректний ID вузла. Спробуйте ще раз.")
+                case 2:
+                    try:
+                        print(manager)
+                        source_id = int(input("Введіть ID вихідного вузла: "))
+                        target_id = int(input("Введіть ID цільового вузла: "))
+                        manager.replicate(manager.node[source_id - 1], manager.node[target_id - 1])
+                    except (ValueError, IndexError):
+                        print("Некоректний ID вузла. Спробуйте ще раз.")
+                case 3:
+                    try:
+                        print(manager)
+                        node_id = int(input("Введіть ID вузла для видалення даних: "))
+                        manager.delete_data(manager.node[node_id - 1])
+                    except (ValueError, IndexError):
+                        print("Некоректний ID вузла. Спробуйте ще раз.")
+                case 4:
+                    print("\nСтан всіх вузлів:")
+                    print(manager)
+                case 5:
+                    new_node_id = len(manager.node) + 1
+                    new_node = Data(new_node_id)
+                    manager.register(new_node)
+                    print(f"Новий вузол {new_node_id} створений та зареєстрований.")
+                case 0:
+                    print("Вихід із програми. До побачення!")
+                    break
+                case _:
+                    print("Некоректний вибір. Спробуйте ще раз.")
+        except ValueError:
+            print('Некоректний вибір. Спробуйте ще раз.')
+
 
 if __name__ == '__main__':
     main()

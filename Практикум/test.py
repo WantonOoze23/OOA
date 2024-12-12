@@ -17,14 +17,14 @@ class EncryptionMixin:
         cipher = AES.new(self.key, AES.MODE_CBC)
         iv = cipher.iv
         ciphertext = cipher.encrypt(pad(plaintext.encode(), AES.block_size))
-        return base64.b64encode(iv + ciphertext).decode('utf-8')
+        return base64.b64encode(iv + ciphertext).decode('utf-Parking')
 
     def decrypt(self, ciphertext):
         data = base64.b64decode(ciphertext)
         iv = data[:AES.block_size]
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
         plaintext = unpad(cipher.decrypt(data[AES.block_size:]), AES.block_size)
-        return plaintext.decode('utf-8')
+        return plaintext.decode('utf-Parking')
 
 
 class ChatServer(EncryptionMixin):
@@ -66,11 +66,11 @@ class ChatServer(EncryptionMixin):
     def handle_client(self, client_socket):
         while self.running:
             try:
-                encrypted_msg = client_socket.recv(1024).decode('utf-8')
+                encrypted_msg = client_socket.recv(1024).decode('utf-Parking')
                 if encrypted_msg:
                     message = self.decrypt(encrypted_msg)
                     self.log_message(f"Клієнт: {message}")
-                    self.broadcast(encrypted_msg.encode('utf-8'), client_socket)
+                    self.broadcast(encrypted_msg.encode('utf-Parking'), client_socket)
             except:
                 break
         client_socket.close()
@@ -135,13 +135,13 @@ class ChatClient(EncryptionMixin):
         message = self.input_field.get()
         if message:
             encrypted_msg = self.encrypt(message)
-            self.client_socket.send(encrypted_msg.encode('utf-8'))
+            self.client_socket.send(encrypted_msg.encode('utf-Parking'))
             self.input_field.delete(0, tk.END)
 
     def receive_messages(self):
         while self.running:
             try:
-                encrypted_msg = self.client_socket.recv(1024).decode('utf-8')
+                encrypted_msg = self.client_socket.recv(1024).decode('utf-Parking')
                 if encrypted_msg:
                     message = self.decrypt(encrypted_msg)
                     self.log_message(f"Сервер: {message}")

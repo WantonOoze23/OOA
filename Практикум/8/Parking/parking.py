@@ -1,4 +1,3 @@
-
 class Parking:
     def __init__(self, name: str, capacity: int):
         self.name = name
@@ -20,6 +19,15 @@ class Parking:
         if spot in self.occupied_spots:
             del self.occupied_spots[spot]
             self.available_spots.append(spot)
+
+    def remove_vehicle(self, spot):
+        if isinstance(spot, str):
+            spot = int(spot)
+        if spot in self.occupied_spots:
+            del self.occupied_spots[spot]
+            self.available_spots.append(spot)
+            return f"Vehicle removed from spot {spot}."
+        return f"No vehicle found in spot {spot}."
 
     def __str__(self):
         return f"Parking {self.name}: {len(self.occupied_spots)}/{self.capacity} spots occupied."
